@@ -19,3 +19,9 @@ def open_door():
     
 def close_door():
     door.request(1)
+    
+def light_on():
+    light.write(1)
+    
+def light_off():
+    light.write(0)

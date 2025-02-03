@@ -16,8 +16,9 @@ print(rtc.datetime())
 # "hour:minutes":"action/argument"
 
 time_actions = {
-    "0:0":open_door,
+    "0:0":light_off,
     "0:1":close_door,
+    "23:59":light_on
                 }
 
 lastactiontime = ""
@@ -25,20 +26,13 @@ lastactiontime = ""
 def turn():
     LED.value(not LED.value())
     
-def switch_relay():
-    if relay_state:
-        relA.on()
-        relB.off()
-    else:
-        relA.off()
-        relB.on()
         
-relayA.write(0)
-relayB.write(1)
 door.stop()
 
 sleep(2)
 curr.set_zero_voltage()
+
+sim.init()
 
 door.numA = 0
 door.request(0)
@@ -52,8 +46,8 @@ if door.action():
         monitor_motor(3000, curr, door)
 
 print("check")
-print(sim._send_command("AT+CPMS?"))
-sim._send_command('AT+CMGL="REC READ"')
+print(sim.send_raw_command('AT+CMGL="REC READ"'))
+print(sim._send_command('AT+CMGL="REC READ"'))
 """
 door.request(1)
 door.numA = 5
@@ -61,9 +55,13 @@ if door.action():
     monitor_motor(17000, curr, door)
 """
 
+uart0.write("AT\r\n")
+sleep(2)
+print(uart0.read().decode('utf-8'))
+
 print(sim.registred())
 
-while False:
+while True:
     LED.on()
 
     print(uart0.read())
@@ -76,8 +74,8 @@ while False:
         command = []
         busy.set()
     
-    if door.action():
-        monitor_motor(3000, curr, door)
+    #if door.action():
+        #monitor_motor(3000, curr, door)
     
     LED.off()
     sleep_ms(1000)

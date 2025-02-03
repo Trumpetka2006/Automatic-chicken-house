@@ -22,8 +22,8 @@ curr = ACS712(ADC(Pin(26)))
 
 door = MotorDriver(motA,motB)
 
-relayA = Relay(relA)
-relayB = Relay(relB)
+light = Relay(relA)
+heater = Relay(relB)
 
 if init_debug:
     debug = UART(1, baudrate=9600, tx=Pin(4), rx=Pin(5))
