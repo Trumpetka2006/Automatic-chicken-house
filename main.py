@@ -45,8 +45,15 @@ door.request(0)
 if door.action():
         monitor_motor(3000, curr, door)
 
+print(sim.delete_memory())
+
+print(sim.get_time())
+
+print(sim._send_command('AT+CMGL="REC UNREAD"'))
+print(sim.read_SMS())
 print("check")
-print(sim.send_raw_command('AT+CMGL="REC READ"'))
+#print(sim.send_raw_command('AT+CPMS?'))
+#print(sim.send_raw_command('AT+CMGL="REC UNREAD"'))
 print(sim._send_command('AT+CMGL="REC READ"'))
 """
 door.request(1)
@@ -55,19 +62,14 @@ if door.action():
     monitor_motor(17000, curr, door)
 """
 
-uart0.write("AT\r\n")
-sleep(2)
-print(uart0.read().decode('utf-8'))
-
 print(sim.registred())
 
 while True:
     LED.on()
-
-    print(uart0.read())
-    uart0.write("AT\r\n")
     
     RTC_check(rtc.datetime(), time_actions, lastactiontime)
+    
+    print(sim.read_SMS())
     
     if command != []:
         print(command)
@@ -78,6 +80,6 @@ while True:
         #monitor_motor(3000, curr, door)
     
     LED.off()
-    sleep_ms(1000)
+    #sleep_ms(1000)
     print(get_time(rtc))
     
