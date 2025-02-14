@@ -8,8 +8,7 @@ Not ready !
 
 ## Command reference
 Commands can be send via SMS message or UART interface.
-Command has to be writen in this format:
-`command arg1 arg2`
+> Command has to be writen in this format: `command arg1 arg2`
 
 ### System Commands
 | Command | Arguments | Description |
@@ -19,6 +18,7 @@ Command has to be writen in this format:
 | time    |  [HH:MM:SS] | Overwrites system time with argument, if no argument is given returns system time |
 | date    | [YY:MM:DD] | Similar to command time write or read system date |
 | admin   | [A/D] [number] | With no argument returns all recognized phone numbers; A-add new number, D-delete number |
+| reset   | FORCE     | Resets **all** settings to default and reboots the MCU, RTC will also get reseted |
 
 
 ### Hardware Commands
@@ -28,6 +28,6 @@ Command has to be writen in this format:
 | door    | [O/C]     | Force door to change state to argument, if no argument is given returns state; O-open, C-close |
 | doormin | [value]   | Set minimal temperature required for door to open, if no argument is given returns current minimal temperature |
 | light   | [O/F]     | Set state of light relay to argument, if no argument is given returns state; O-on, F-off |
-| heatet  | [O/F]     | Set state of heater relay to argument, if no argument is given returns state; O-on, F-off |
+| heater  | [O/F]     | Set state of heater relay to argument, if no argument is given returns state; O-on, F-off |
 | temp    |           | Returns temperature value from sensor |
 | press   |           | Returns atmospheric pressure value form sensor |
