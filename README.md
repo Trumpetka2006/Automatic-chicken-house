@@ -31,3 +31,13 @@ Commands can be send via SMS message or UART interface.
 | heater  | [O/F]     | Set state of heater relay to argument, if no argument is given returns state; O-on, F-off |
 | temp    |           | Returns temperature value from sensor |
 | press   |           | Returns atmospheric pressure value form sensor |
+
+## Utility programs
+Some handy standalone programs to test functionality of external modules.
+> Folder utility can be removed from main aplication, it is only for development and testing reasons
+
+| File name | Description |
+| ----- | ----- |
+| I2C_scaner.py | Scans for all I2C addresses present on the bus |
+| bmp280_test.py | Tests function of bmp280 |
+| sim800_test.py | Tests comunication betwen SIM800 |
