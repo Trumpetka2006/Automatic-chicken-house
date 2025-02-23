@@ -7,7 +7,6 @@ def RTC_check(time,actions,lastaction):
     if datetime in trigger_times and lastaction != datetime:
         lastaction = datetime
         actions[datetime]()
-        print(actions[datetime])
         
 
 def get_time(rtc):

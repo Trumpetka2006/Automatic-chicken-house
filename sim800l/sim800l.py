@@ -33,6 +33,12 @@ class SIM800L():
                 return None
         else:
             return None
+    
+    def send_SMS(self, message, number):
+        self.uart.write(f'AT+CMGS="{number}"')
+        self.uart.write(message + chr(26))
+        return self.uart.read().decode("utf-8")
+    
     def delete_memory(self):
         response = self._send_command('AT+CMGD=1,1')
         lenght = len(response)
@@ -60,7 +66,8 @@ class SIM800L():
         return response.decode('utf-8')
         
     def registred(self):
-        if self._send_command("AT+CREG?")[1] == '+CREG: 0,1\r':
+        print((self._send_command("AT+CREG?")[1],0))
+        if self._send_command("AT+CREG?")[1] == '+CREG: 0,1\r\n':
             return True
         else:
             return False 

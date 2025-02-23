@@ -16,10 +16,14 @@ def send_at_command(command, delay=1):
 
 # Testovací smyčka
 print("Testing SIM800L communication...")
-#time.sleep(2)
+time.sleep(2)
 
 # Odeslání základního příkazu AT
 send_at_command("AT")
+
+send_at_command('AT+CPMS?')
+
+send_at_command('AT+CMGL="REC UNREAD"')
 
 # Odeslání příkazu pro kontrolu signálu
 send_at_command("AT+CSQ")
@@ -30,4 +34,5 @@ send_at_command("AT+CREG?")
 # Odeslání příkazu pro kontrolu operátora
 send_at_command("AT+COPS?")
 
-send_at_command("AT+CPOWD=1")
+#send_at_command("AT+CPOWD=1")
+

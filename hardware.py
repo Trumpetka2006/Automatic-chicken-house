@@ -1,4 +1,4 @@
-from machine import Pin, UART, I2C, ADC
+from machine import Pin, UART, I2C, ADC, RTC
 from utime import sleep
 from bmp280 import BMP280I2C
 from sim800l import SIM800L
@@ -6,9 +6,9 @@ from modules import ACS712, MotorDriver, Relay
 
 init_bmp280 = False
 init_sim800l = True
-init_debug = False
+init_console = True
 
-
+rtc = RTC()
 
 LED = Pin(25,Pin.OUT)
 
@@ -25,8 +25,8 @@ door = MotorDriver(motA,motB)
 light = Relay(relA)
 heater = Relay(relB)
 
-if init_debug:
-    debug = UART(1, baudrate=9600, tx=Pin(4), rx=Pin(5))
+if init_console:
+    console = UART(1, baudrate=115200, tx=Pin(4), rx=Pin(5), timeout=10)
 
 if init_sim800l:
     uart0 = UART(0, baudrate=9600, tx=Pin(16), rx=Pin(17))
