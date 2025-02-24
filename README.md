@@ -16,7 +16,7 @@ Commands can be send via SMS message or UART interface.
 | help    |           | Show all valid commands |
 | state   |           | Reports state of all modules and sensors |
 | time    |  [HH:MM:SS] | Overwrites system time with argument, if no argument is given returns system time |
-| date    | [YY:MM:DD] | Similar to command time write or read system date |
+| date    | [YYYY-MM-DD] | Similar to command time write or read system date |
 | admin   | [A/D] [number] | With no argument returns all recognized phone numbers; A-add new number, D-delete number |
 | reset   | FORCE     | Resets **all** settings to default and reboots the MCU, RTC will also get reseted |
 

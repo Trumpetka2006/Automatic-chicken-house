@@ -25,6 +25,10 @@ door = MotorDriver(motA,motB)
 light = Relay(relA)
 heater = Relay(relB)
 
+console = None
+bmp280_i2c = None
+sim = None
+
 if init_console:
     console = UART(1, baudrate=115200, tx=Pin(4), rx=Pin(5), timeout=10)
 

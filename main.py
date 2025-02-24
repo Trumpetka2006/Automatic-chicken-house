@@ -6,12 +6,7 @@ from utime import sleep
 from time import sleep_ms
 
 
-#[func, arg]
-
-command = []
 buff = ""
-
-#hw_init()
 
 rtc.datetime((2017, 8, 23, 0, 23, 59, 48, 0))
 print(rtc.datetime())
@@ -24,14 +19,12 @@ time_actions = {
     "23:59":light_on
                 }
 
-lastactiontime = ""
-
 def read_console(uart):
     global buff
     command = ""
     read = uart.read()
     if read == None:
-        return None
+        return
     else:
         read = read.decode("ascii")
     if read in "\r":
@@ -39,7 +32,9 @@ def read_console(uart):
         uart.write(bytes(read,"ascii"))
         command = buff
         buff = ""
-        uart.write('\n')
+        uart.write('\r\n')
+        if command == "":
+            return None
         return command
     else :
         buff += read
@@ -51,7 +46,9 @@ def process(cmd):
     lenght = len(cmd)
     print([cmd, lenght])
     try:
-        if lenght == 1:
+        if lenght == 0:
+            return ""
+        elif lenght == 1:
             return COMMANDS[cmd[0]]()
         elif lenght == 2:
             return COMMANDS[cmd[0]](cmd[1])
@@ -68,10 +65,12 @@ def process(cmd):
 
 door.stop()
 
+if init_sim800l:
+    sim.konwnnumbers = ["+420607560209"]
+    sim.init()
+
 sleep(2)
 curr.set_zero_voltage()
-
-#sim.init()
 """
 while not sim.registred():
     print("waiting")
@@ -106,28 +105,30 @@ if door.action():
 """
 
 #print(sim.registred())
-
-console.write('Starting...\nEggOS>')
+if init_console:
+    console.write('\033[2J\033[H')
+    console.write('Starting...\r\nEggOS>')
 
 while True:
     LED.on()
     
-    RTC_check(rtc.datetime(), time_actions, lastactiontime)
+    RTC_check(rtc.datetime(), time_actions)
     
     #print(sim.read_SMS())
-    
+    """
     if command != []:
         print(command)
         command = []
         busy.set()
-        
+    """ 
     cmd = read_console(console)
     if cmd != None:
-        console.write(str(process(cmd))+"\n>")
+        console.write(str(process(cmd))+"\r\n>")
     
     #if door.action():
         #monitor_motor(3000, curr, door)
     
     LED.off()
+    sleep_ms(100)
 
     

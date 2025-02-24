@@ -1,7 +1,9 @@
 from hardware import *
 
+lastaction = ""
 
-def RTC_check(time,actions,lastaction):
+def RTC_check(time,actions):
+    global lastaction
     datetime = f"{time[4]}:{time[5]}"
     trigger_times = actions.keys()
     if datetime in trigger_times and lastaction != datetime:

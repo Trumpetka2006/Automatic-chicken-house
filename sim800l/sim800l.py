@@ -2,6 +2,8 @@ import time
 
 class SIM800L():
     uart = None
+    konwnnumbers = ["+420607560209"]
+    
     def __init__(self,sim_uart):
         self.uart = sim_uart
         print("Sim800 init!")
