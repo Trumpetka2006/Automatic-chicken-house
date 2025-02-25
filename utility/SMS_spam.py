@@ -1,5 +1,6 @@
 import machine
 import utime
+import time
 
 # Nastavení UART (TX=GP0, RX=GP1 na Raspberry Pi Pico)
 uart = machine.UART(0, baudrate=9600, tx=machine.Pin(16), rx=machine.Pin(17))
@@ -34,3 +35,9 @@ utime.sleep(3)  # Počkat na odpověď modulu
 response = uart.read()
 if response:
     print(response.decode())
+    
+LED = Pin(25, Pin.OUT)
+
+while True :
+    LED.value(not LED.value())
+    time.sleep_ms(100)

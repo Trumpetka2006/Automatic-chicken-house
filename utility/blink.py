@@ -5,4 +5,4 @@ LED = Pin(25, Pin.OUT)
 
 while True :
     LED.value(not LED.value())
-    time.sleep(1)
+    time.sleep_ms(100)

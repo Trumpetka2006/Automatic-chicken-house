@@ -10,6 +10,7 @@ class SIM800L():
         
     def init(self):
         strikes = 0
+        self._send_command("AT+CNMI=0,0,0,0,0")
         while strikes < 10:
             if self._send_command('AT+CMGF=1')[1] != 'OK':
                 strikes += 1
@@ -25,9 +26,9 @@ class SIM800L():
         return response
     
     def read_SMS(self, index = 1):
-        response = self._send_command('AT+CMGL="REC UNREAD"')
+        response = self._send_command('AT+CMGL="REC UNREAD"') #REC UNREAD
         lenght = len(response)
-        #print(response)
+        print(response)
         if response[lenght - 2] == 'OK':
             try:
                 return (response[2],response[1].split('"')[3])

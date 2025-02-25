@@ -21,6 +21,8 @@ time.sleep(2)
 # Odeslání základního příkazu AT
 send_at_command("AT")
 
+send_at_command("AT+CNMI=0,0,0,0,0")
+
 send_at_command('AT+CPMS?')
 
 send_at_command('AT+CMGL="REC UNREAD"')
