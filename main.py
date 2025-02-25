@@ -30,7 +30,13 @@ def read_console(uart):
     if read in "\r":
         buff += read
         uart.write(bytes(read,"ascii"))
-        command = buff
+        command = []
+        for char in buff:
+            if char == '\b' and command:
+                command.pop()
+            else: 
+                command.append(char)
+        command = ''.join(command)
         buff = ""
         uart.write('\r\n')
         if command == "":
