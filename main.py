@@ -32,7 +32,7 @@ def read_console(uart):
         uart.write(bytes(read,"ascii"))
         command = []
         for char in buff:
-            if char == '\x7f':
+            if char == '\x7f' or char =='\x08':
                 if command:
                     command.pop()
             else: 
@@ -121,7 +121,7 @@ while True:
     
     RTC_check(rtc.datetime(), time_actions)
     
-    print(sim.read_SMS())
+    #print(sim.read_SMS())
     """
     if command != []:
         print(command)
@@ -136,6 +136,6 @@ while True:
         #monitor_motor(3000, curr, door)
     
     LED.off()
-    sleep_ms(1000)
+    sleep_ms(100)
 
     
