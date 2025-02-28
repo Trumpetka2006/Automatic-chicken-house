@@ -11,15 +11,44 @@ from hardware import (
 )
 from controls import monitor_motor
 import re
+import time
 
-on_off = {"O": True, "F": False}
+on_off = {"o": True, "f": False}
 true_false = {1: "ON", 0: "OFF"}
-open_close = {"O": 0, "C": 1}
+open_close = {"o": 0, "c": 1}
 door_state = {0: "OPEN", 1: "CLOSE", -1: "UNKNOWN"}
+
+def process(cmd):
+    cmd = cmd.lower()
+    cmd = cmd.split()
+    lenght = len(cmd)
+    #print([cmd, lenght])
+    try:
+        if lenght == 0:
+            return ""
+        elif lenght == 1:
+            return COMMANDS[cmd[0]]()
+        elif lenght == 2:
+            return COMMANDS[cmd[0]](cmd[1])
+        elif lenght == 3:
+            return COMMANDS[cmd[0]](cmd[1], cmd[2])
+        else :
+            raise TypeError
+    except KeyError:
+        return 'Invalid Command'
+    except IndexError:
+        return ""
+    except TypeError:
+        return "Too many arguments"
 
 
 def cmd_help():
-    return COMMANDS.keys()
+    ansfer = "Available commands:\r\n"
+    cmds = COMMANDS.keys()
+    for cmd in cmds:
+        ansfer = ansfer + f"\t{str(cmd)}\r\n"
+    ansfer = ansfer + "For more info visit: https://github.com/Trumpetka2006/Automatic-chicken-house/blob/main/README.md"
+    return ansfer
 
 
 def test():
@@ -67,19 +96,19 @@ def cmd_admin(operation=None, number=None):
         elif operation != None and number != None:
             # print(number)
             # print(bool(re.match(r"^\+\d{1,3}\d{9}$", number)))
-            if operation == "A":  # and re.match(r"^\+\d{1,3}\d{9}$", number.strip()):
+            if operation == "a":  # and re.match(r"^\+\d{1,3}\d{9}$", number.strip()):
                 sim.konwnnumbers.append(number)
                 return f"number {number} was added"
-            elif operation == "A":
+            elif operation == "a":
                 return f"number is in bad format or prefix is mising"
-            elif operation == "D" and number in sim.konwnnumbers:
+            elif operation == "d" and number in sim.konwnnumbers:
                 buff = []
                 for i in range(len(sim.konwnnumbers)):
                     if number != sim.konwnnumbers[i]:
                         buff.append(sim.konwnnumbers[i])
                 sim.konwnnumbers = buff
                 return "number was removed"
-            elif operation == "D" and not number in sim.konwnnumbers:
+            elif operation == "d" and not number in sim.konwnnumbers:
                 return "unknown number"
     else:
         return "SIM800L is not enabeled in config"
@@ -98,7 +127,7 @@ def cmd_atcmd(command=None):
 def cmd_light(state=None):
     if state == None:
         return true_false[light.read()]
-    if state == "O" or "F":
+    if state == "o" or "f":
         light.write(on_off[state])
         light.pin.value(on_off[state])
         return f"light turned {true_false[light.read()]}"
@@ -107,7 +136,7 @@ def cmd_light(state=None):
 def cmd_heater(state=None):
     if state == None:
         return true_false[heater.read()]
-    if state == "O" or "F":
+    if state == "o" or "f":
         heater.write(on_off[state])
         heater.pin.value(on_off[state])
         return f"light turned {true_false[heater.read()]}"
@@ -116,7 +145,7 @@ def cmd_heater(state=None):
 def cmd_door(state=None):
     if state == None:
         return door_state[door.state()]
-    if state == "O" or "C":
+    if state == "o" or "c":
         door.numA = 9999
         door.request(open_close[state])
         if door.action():
@@ -149,6 +178,9 @@ def cmd_press():
         return f"Temperature: {readout['p']} hPa"
     else:
         return "BMP280 is not enabeled in config"
+    
+def cmd_freez():
+    time.sleep(10)
 
 
 COMMANDS = {
@@ -164,4 +196,5 @@ COMMANDS = {
     "doormin": cmd_doormin,
     "temp": cmd_temp,
     "press": cmd_press,
+    "freez": cmd_freez,
 }

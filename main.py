@@ -3,13 +3,18 @@ from controls import *
 from commands import *
 from rtc_events import *
 from utime import sleep
-from time import sleep_ms
+from time import sleep_ms, ticks_ms
+from machine import WDT
+import json
 
+start_time = ticks_ms()
 
-buff = ""
+command_queue = [["+420602716209","time"]]
 
 rtc.datetime((2017, 8, 23, 0, 23, 59, 48, 0))
 print(rtc.datetime())
+
+
 
 # "hour:minutes":"action/argument"
 
@@ -18,57 +23,12 @@ time_actions = {
     "0:1":light_on,
     "23:59":light_on
                 }
+with open("timetable.json", "w") as file:
+    json.dump(time_actions, file)
+    file.close()
 
-def read_console(uart):
-    global buff
-    command = ""
-    read = uart.read()
-    if read == None:
-        return
-    else:
-        read = read.decode("ascii")
-    if read in "\r":
-        buff += read
-        uart.write(bytes(read,"ascii"))
-        command = []
-        for char in buff:
-            if char == '\x7f' or char =='\x08':
-                if command:
-                    command.pop()
-            else: 
-                command.append(char)
-        command = ''.join(command)
-        buff = ""
-        uart.write('\r\n')
-        if command == "":
-            return None
-        return command
-    else :
-        buff += read
-        uart.write(bytes(read,"ascii"))
-        return None
     
-def process(cmd):
-    cmd = cmd.split()
-    lenght = len(cmd)
-    print([cmd, lenght])
-    try:
-        if lenght == 0:
-            return ""
-        elif lenght == 1:
-            return COMMANDS[cmd[0]]()
-        elif lenght == 2:
-            return COMMANDS[cmd[0]](cmd[1])
-        elif lenght == 3:
-            return COMMANDS[cmd[0]](cmd[1], cmd[2])
-        else :
-            raise TypeError
-    except KeyError:
-        return 'Invalid Command'
-    except IndexError:
-        return ""
-    #except TypeError:
-        #return "Too many arguments"
+
 
 door.stop()
 
@@ -76,7 +36,7 @@ if init_sim800l:
     sim.konwnnumbers = ["+420607560209"]
     sim.init()
 
-sleep(2)
+sleep(1)
 curr.set_zero_voltage()
 """
 while not sim.registred():
@@ -112,9 +72,16 @@ if door.action():
 """
 
 #print(sim.registred())
-if init_console:
+if console:
     console.write('\033[2J\033[H')
-    console.write('Starting...\r\nEggOS>')
+    console.write('Starting...\r\n')
+
+stdout("info",f"Started in {ticks_ms()-start_time} ms")
+if debugMode.value():
+    wdt = WDT(timeout=5000)
+else:
+    stdout("warning","Debug mode is active")
+    stdout("debug", str(cmd_help))
 
 while True:
     LED.on()
@@ -127,13 +94,20 @@ while True:
         print(command)
         command = []
         busy.set()
-    """ 
-    cmd = read_console(console)
+    """
+    if console:
+        cmd = read_console(console)
     if cmd != None:
-        console.write(str(process(cmd))+"\r\n>")
+        console.write(str(process(cmd))+"\r\n> ")
+        
+    if command_queue:
+        phone_command = command_queue.pop()
+        stdout("debug",f"Sending {str(process(phone_command[1]))} to {phone_command[0]}")
     
     #if door.action():
         #monitor_motor(3000, curr, door)
+    if wdt:
+        wdt.feed()
     
     LED.off()
     sleep_ms(100)
