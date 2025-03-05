@@ -2,8 +2,8 @@ Not ready !
 ## Development progress
 - [X] Integrated hardware
 - [X] Hardware procedures
-- [ ] SMS commands
-- [ ] Main procedures
+- [X] SMS commands
+- [X] Main procedures
 - [ ] Documentation
 
 ## Command reference
