@@ -4,7 +4,7 @@ from bmp280 import BMP280I2C
 from sim800l import SIM800L
 from modules import ACS712, MotorDriver, Relay
 
-init_bmp280 = False
+init_bmp280 = True 
 init_sim800l = False
 init_console = True
 
@@ -12,6 +12,7 @@ rtc = RTC()
 wdt = None
 
 LED = Pin(25,Pin.OUT)
+LED.on()
 
 relA = Pin(10, Pin.OUT)
 relB = Pin(22, Pin.OUT)

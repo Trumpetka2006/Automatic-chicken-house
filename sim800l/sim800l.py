@@ -6,29 +6,29 @@ class SIM800L():
     
     def __init__(self,sim_uart):
         self.uart = sim_uart
-        print("Sim800 init!")
         
     def init(self):
         strikes = 0
         self._send_command("AT+CNMI=0,0,0,0,0")
+        self._send_command("AT+GSMBUSY=1")
         while strikes < 10:
             if self._send_command('AT+CMGF=1')[1] != 'OK':
                 strikes += 1
                 continue
-            print("OK")
             break
         
     def _send_command(self, command, delay=1):
         self.uart.write(command + '\r\n')
         time.sleep(delay)
-        response = self.uart.read()
-        response = response.decode("utf-8").replace("\r", "").split("\n")
+        if self.uart.any():
+            response = self.uart.read()
+            response = response.decode("utf-8").replace("\r", "").split("\n")
+        else: response = [None, "ERROR"]
         return response
     
     def read_SMS(self, index = 1):
         response = self._send_command('AT+CMGL="REC UNREAD"') #REC UNREAD
         lenght = len(response)
-        print(response)
         if response[lenght - 2] == 'OK':
             try:
                 return (response[2],response[1].split('"')[3])
@@ -38,9 +38,10 @@ class SIM800L():
             return None
     
     def send_SMS(self, message, number):
-        self.uart.write(f'AT+CMGS="{number}"')
+        self._send_command(f'AT+CMGS="{number}"')
         self.uart.write(message + chr(26))
-        return self.uart.read().decode("utf-8")
+        time.sleep(3)
+        return self.uart.read()
     
     def delete_memory(self):
         response = self._send_command('AT+CMGD=1,1')

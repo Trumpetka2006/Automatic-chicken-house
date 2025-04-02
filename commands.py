@@ -42,20 +42,38 @@ def process(cmd):
         return "Too many arguments"
 
 
-def cmd_help():
-    ansfer = "Available commands:\r\n"
+def cmd_help(cmd = None,info=False):
+    if info:
+        return "Show this dialog"
     cmds = COMMANDS.keys()
+    if cmd and cmd in cmds:
+        return f"Command help:\r\n\t{cmd}\t- {COMMANDS[cmd](info=True)}\r\n"
+    ansfer = "Available commands:\r\n"
     for cmd in cmds:
-        ansfer = ansfer + f"\t{str(cmd)}\r\n"
+        ansfer = ansfer + f"\t{str(cmd)}\t- {COMMANDS[cmd](info=True)}\r\n"
     ansfer = ansfer + "For more info visit: https://github.com/Trumpetka2006/Automatic-chicken-house/blob/main/README.md"
     return ansfer
 
+def cmd_sms_read(info=False):
+    if info:
+        return "Print incoming SMS"
+    return sim.read_SMS()
 
-def test():
+def cmd_sms_send(info=False):
+    if info:
+        return "Sends test string to all admins"
+    return sim.send_SMS("Hello World!", "+420602716250")
+
+
+def test(info=False):
+    if info:
+        return "Print a test string"
     return "Hello World!"
 
 
-def cmd_time(value=None):
+def cmd_time(value=None,info=False):
+    if info:
+        return "Get/set system time [HH:MM:SS]"
     time = rtc.datetime()
     if value == None:
         return f"{time[4]}:{time[5]}:{time[6]}"
@@ -72,7 +90,9 @@ def cmd_time(value=None):
         return f"{value}"
 
 
-def cmd_date(value=None):
+def cmd_date(value=None,info=False):
+    if info:
+        return "Get/set system date [YYYY-MM-DD]"
     date = rtc.datetime()
     if value == None:
         return f"{date[0]}-{date[1]}-{date[2]}"
@@ -89,7 +109,9 @@ def cmd_date(value=None):
         return f"{value} is not valid"
 
 
-def cmd_admin(operation=None, number=None):
+def cmd_admin(operation=None, number=None,info=False):
+    if info:
+        return "Add/delet known phone number [a/d] [number]"
     if init_sim800l:
         if operation == None and number == None:
             return sim.konwnnumbers
@@ -114,7 +136,9 @@ def cmd_admin(operation=None, number=None):
         return "SIM800L is not enabeled in config"
 
 
-def cmd_atcmd(command=None):
+def cmd_atcmd(command=None,info=False):
+    if info:
+        return "Send an ATcommand [at+command]"
     if init_sim800l:
         if command == None:
             return "no AT command given"
@@ -124,7 +148,8 @@ def cmd_atcmd(command=None):
         return "SIM800L is not enabeled in config"
 
 
-def cmd_light(state=None):
+def cmd_light(state=None,info=False):
+    if info: return "Get/set state of light relay [o/f]"
     if state == None:
         return true_false[light.read()]
     if state == "o" or "f":
@@ -133,7 +158,8 @@ def cmd_light(state=None):
         return f"light turned {true_false[light.read()]}"
 
 
-def cmd_heater(state=None):
+def cmd_heater(state=None,info=False):
+    if info: return "Get/set state of heater relay [o/f]"
     if state == None:
         return true_false[heater.read()]
     if state == "o" or "f":
@@ -142,7 +168,8 @@ def cmd_heater(state=None):
         return f"light turned {true_false[heater.read()]}"
 
 
-def cmd_door(state=None):
+def cmd_door(state=None,info=False):
+    if info: return "Get/set state of door [o/c]"
     if state == None:
         return door_state[door.state()]
     if state == "o" or "c":
@@ -153,7 +180,8 @@ def cmd_door(state=None):
         return door_state[door.state()]
 
 
-def cmd_doormin(value=None):
+def cmd_doormin(value=None,info=False):
+    if info: return "Get/set minimal temperature where doors can open"
     if value == None:
         return door.numB
     try:
@@ -164,7 +192,8 @@ def cmd_doormin(value=None):
         return f"new min temperature is {door.numB}"
 
 
-def cmd_temp():
+def cmd_temp(info=False):
+    if info: return "Get temperature form sensor"
     if init_bmp280:
         readout = bmp280_i2c.measurements
         return f"Temperature: {readout['t']} ^C"
@@ -172,14 +201,16 @@ def cmd_temp():
         return "BMP280 is not enabeled in config"
 
 
-def cmd_press():
+def cmd_press(info=False):
+    if info: return "Get preasure form sensor"
     if init_bmp280:
         readout = bmp280_i2c.measurements
         return f"Temperature: {readout['p']} hPa"
     else:
         return "BMP280 is not enabeled in config"
     
-def cmd_freez():
+def cmd_freeze(info=False):
+    if info: return "Simulate system freeze"
     time.sleep(10)
 
 
@@ -196,5 +227,7 @@ COMMANDS = {
     "doormin": cmd_doormin,
     "temp": cmd_temp,
     "press": cmd_press,
-    "freez": cmd_freez,
+    "freeze": cmd_freeze,
+    "smsr": cmd_sms_read,
+    "smss": cmd_sms_send,
 }
