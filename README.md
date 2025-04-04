@@ -4,7 +4,7 @@ Not ready !
 - [X] Hardware procedures
 - [X] SMS commands
 - [X] Main procedures
-- [ ] Documentation
+- [X] Documentation
 
 ## Command reference
 Commands can be send via SMS message or UART interface.
