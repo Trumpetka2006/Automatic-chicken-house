@@ -5,7 +5,7 @@ from sim800l import SIM800L
 from modules import ACS712, MotorDriver, Relay
 
 init_bmp280 = True 
-init_sim800l = False
+init_sim800l = True 
 init_console = True
 
 rtc = RTC()

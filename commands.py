@@ -165,7 +165,7 @@ def cmd_heater(state=None,info=False):
     if state == "o" or "f":
         heater.write(on_off[state])
         heater.pin.value(on_off[state])
-        return f"light turned {true_false[heater.read()]}"
+        return f"heater turned {true_false[heater.read()]}"
 
 
 def cmd_door(state=None,info=False):

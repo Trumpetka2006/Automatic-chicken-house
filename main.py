@@ -83,7 +83,7 @@ while True:
         loop = 0
         if bmp280_i2c:
             door.a = bmp280_i2c.measurements['t']
-            stdout("debug",str(door.a))
+            #stdout("debug",str(door.a))
         if sim:
             message = sim.read_SMS()
             if message:
