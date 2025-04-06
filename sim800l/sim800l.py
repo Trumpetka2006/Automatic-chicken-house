@@ -25,6 +25,34 @@ class SIM800L():
             response = response.decode("utf-8").replace("\r", "").split("\n")
         else: response = [None, "ERROR"]
         return response
+
+    def _beta_send_command(self,command):
+        self.uart.read()
+        self.uart.write(command + '\r\n')
+        time.sleep_ms(50)
+        response = ""
+        while self.uart.any():
+            response += self.uart.read().decode("utf-8")
+            time.sleep_ms(50)
+        return response
+    
+    def has_msg(self):
+        try:
+            response = self._beta_send_command("AT+CPMS?").replace('\r','').split('\n')
+            return int(response[1].split(',')[1]) > 0
+        except IndexError:
+            return False 
+    
+    def pop_sms_commands(self):
+        sms_list = self.read_all_sms().split("\n")
+        sms_list.pop()
+        output = []
+        for i in range(len(sms_list)):
+            if sms_list[i][:5] == "+CMGL":
+                metadata = sms_list[i].split(',')
+                output.append([metadata[2].replace('"', ''), sms_list[i+1].replace('\r', '')])
+                self._send_command(f"AT+CMGD={int(metadata[0].split()[1])},0")
+        return output
     
     def read_SMS(self, index = 1):
         response = self._send_command('AT+CMGL="REC UNREAD"') #REC UNREAD
@@ -36,6 +64,11 @@ class SIM800L():
                 return None
         else:
             return None
+
+    def read_all_sms(self):
+        response = self._beta_send_command('AT+CMGL="ALL"')
+        return response
+
     
     def send_SMS(self, message, number):
         self._send_command(f'AT+CMGS="{number}"')

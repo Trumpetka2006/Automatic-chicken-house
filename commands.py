@@ -22,7 +22,7 @@ def process(cmd):
     cmd = cmd.lower()
     cmd = cmd.split()
     lenght = len(cmd)
-    #print([cmd, lenght])
+    print([cmd, lenght])
     try:
         if lenght == 0:
             return ""
@@ -68,7 +68,8 @@ def cmd_sms_send(info=False):
 def test(info=False):
     if info:
         return "Print a test string"
-    return "Hello World!"
+    
+    return sim.pop_sms_commands()
 
 
 def cmd_time(value=None,info=False):
@@ -114,23 +115,23 @@ def cmd_admin(operation=None, number=None,info=False):
         return "Add/delet known phone number [a/d] [number]"
     if init_sim800l:
         if operation == None and number == None:
-            return sim.konwnnumbers
+            return sim.known_numbers
         elif operation != None and number != None:
             # print(number)
             # print(bool(re.match(r"^\+\d{1,3}\d{9}$", number)))
             if operation == "a":  # and re.match(r"^\+\d{1,3}\d{9}$", number.strip()):
-                sim.konwnnumbers.append(number)
+                sim.known_numbers.append(number)
                 return f"number {number} was added"
             elif operation == "a":
                 return f"number is in bad format or prefix is mising"
-            elif operation == "d" and number in sim.konwnnumbers:
+            elif operation == "d" and number in sim.known_numbers:
                 buff = []
-                for i in range(len(sim.konwnnumbers)):
-                    if number != sim.konwnnumbers[i]:
-                        buff.append(sim.konwnnumbers[i])
-                sim.konwnnumbers = buff
+                for i in range(len(sim.known_numbers)):
+                    if number != sim.known_numbers[i]:
+                        buff.append(sim.known_numbers[i])
+                sim.known_numbers = buff
                 return "number was removed"
-            elif operation == "d" and not number in sim.konwnnumbers:
+            elif operation == "d" and not number in sim.known_numbers:
                 return "unknown number"
     else:
         return "SIM800L is not enabeled in config"
@@ -196,7 +197,7 @@ def cmd_temp(info=False):
     if info: return "Get temperature form sensor"
     if init_bmp280:
         readout = bmp280_i2c.measurements
-        return f"Temperature: {readout['t']} ^C"
+        return f"Temperature: {readout['t']} °C"
     else:
         return "BMP280 is not enabeled in config"
 
@@ -205,7 +206,7 @@ def cmd_press(info=False):
     if info: return "Get preasure form sensor"
     if init_bmp280:
         readout = bmp280_i2c.measurements
-        return f"Temperature: {readout['p']} hPa"
+        return f"Pressure: {readout['p']} hPa"
     else:
         return "BMP280 is not enabeled in config"
     

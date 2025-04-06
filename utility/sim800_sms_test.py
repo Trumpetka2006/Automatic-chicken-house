@@ -35,3 +35,4 @@ while True:
             send_at_command(f"AT+CMGR={index}")
 
     utime.sleep(0.5)  # Krátká prodleva
+

@@ -32,9 +32,9 @@ with open("timetable.json", "w") as file:
 door.stop()
 
 if init_sim800l:
-    sim.konwnnumbers = ["+420607560209", "+420602716250"]
+    sim.known_numbers = ["+420607560209", "+420602716250"]
     sim.init()
-
+stdout("info","HelloWorld!")
 sleep(1)
 curr.set_zero_voltage()
 """
@@ -60,6 +60,8 @@ else:
     
 loop = 0
 
+print(sim.read_all_sms())
+
 while True:
     loop += 1
     LED.on()
@@ -74,26 +76,31 @@ while True:
     if command_queue != []:
         stdout("debug", command_queue)
         phone_command = command_queue.pop()
-        stdout("debug",f"Sending {str(process(phone_command[0]))} to {phone_command[1]}")
-        sim.send_SMS(str(process(phone_command[0])).replace("\t"," "), phone_command[1])
+        stdout("debug",f"Sending {phone_command[1]} to {phone_command[0]}")
+        sim.send_SMS(str(process(phone_command[1])).replace("\t"," "), phone_command[0])
     
     #if door.action():
         #monitor_motor(3000, curr, door)
+        
     if loop > 50:
         loop = 0
         if bmp280_i2c:
             door.a = bmp280_i2c.measurements['t']
             #stdout("debug",str(door.a))
         if sim:
-            message = sim.read_SMS()
-            if message:
-                if message[1] in sim.konwnnumbers:
-                    command_queue.append(message)
-                else : stdout("warning", f"{message[1]} is unknown number!")
+            if sim.has_msg():
+                stdout("INFO","new message!")
+                for msg in sim.pop_sms_commands():
+                    stdout("debug",msg)
+                    if msg[0] in sim.known_numbers:
+                        
+                        command_queue.append(msg)
+                    else : stdout("warning", f"{msg[0]} is unknown number!")
+        
     if wdt:
         wdt.feed()
     
     LED.off()
-    sleep_ms(100)
+    sleep_ms(10)
 
     
